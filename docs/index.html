@@ -5,53 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FormAI - AI Adaptive Fitness Coach</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1c1c1e; background: #f5f5f7; padding: 20px; }
-        .container { max-width: 720px; margin: 0 auto; background: white; border-radius: 16px; padding: 40px; box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
-        h1 { font-size: 28px; margin-bottom: 8px; color: #0a84ff; }
-        p { margin-bottom: 12px; color: #6e6e73; }
-        a { color: #0a84ff; text-decoration: none; }
-        .features { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
-        .feature { background: #f5f5f7; border-radius: 12px; padding: 20px; text-align: center; }
-        .feature h3 { font-size: 16px; margin-bottom: 4px; color: #1c1c1e; }
-        .feature p { font-size: 14px; color: #6e6e73; }
-        .cta { display: inline-block; background: #0a84ff; color: white; padding: 12px 32px; border-radius: 12px; font-weight: 600; text-decoration: none; margin-top: 16px; }
-        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e5ea; font-size: 14px; color: #8e8e93; text-align: center; }
-        .footer a { margin: 0 8px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+            border-radius: 16px;
+            margin-bottom: 40px;
+        }
+        .hero h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .hero p { font-size: 1.2em; opacity: 0.9; }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .feature {
+            padding: 24px;
+            background: #f5f5f7;
+            border-radius: 12px;
+        }
+        .feature h3 { margin-top: 0; color: #007AFF; }
+        .links {
+            text-align: center;
+            padding: 30px;
+            background: #f5f5f7;
+            border-radius: 12px;
+        }
+        .links a {
+            display: inline-block;
+            margin: 8px 16px;
+            color: #007AFF;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .links a:hover { text-decoration: underline; }
+        .contact {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+        }
+        .contact a { color: #007AFF; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="hero">
         <h1>FormAI</h1>
-        <p>AI-Adaptive Fitness Coach that adjusts to how you feel every day.</p>
+        <p>Your body changes daily. Your workouts should too.</p>
+    </div>
 
-        <div class="features">
-            <div class="feature">
-                <h3>Daily Readiness</h3>
-                <p>4-dimension score drives workout adjustments</p>
-            </div>
-            <div class="feature">
-                <h3>Transparent AI</h3>
-                <p>Every adjustment shows why</p>
-            </div>
-            <div class="feature">
-                <h3>Periodized Plans</h3>
-                <p>Foundation, Build, Peak, Deload</p>
-            </div>
-            <div class="feature">
-                <h3>Smart Progression</h3>
-                <p>Safe, science-based overload</p>
-            </div>
+    <div class="features">
+        <div class="feature">
+            <h3>Daily Readiness Score</h3>
+            <p>Answer 4 quick questions about energy, sleep, soreness, and motivation. Get a personalized readiness score that drives your workout.</p>
         </div>
-
-        <a href="https://apps.apple.com/app/formai" class="cta">Download on App Store</a>
-
-        <div class="footer">
-            <a href="support.html">Support</a>
-            <a href="privacy.html">Privacy Policy</a>
-            <a href="terms.html">Terms of Use</a>
-            <p>FormAI by zzoutuo &copy; 2026</p>
+        <div class="feature">
+            <h3>AI Adaptive Workouts</h3>
+            <p>Every session adapts to how you feel today. Volume, intensity, and exercise selection adjust automatically based on your readiness.</p>
         </div>
+        <div class="feature">
+            <h3>Periodized Training</h3>
+            <p>Follow a science-backed periodized plan that progresses through accumulation, intensification, and peak phases.</p>
+        </div>
+        <div class="feature">
+            <h3>Smart Substitutions</h3>
+            <p>Report pain or discomfort and get intelligent exercise substitutions that work the same muscle groups without aggravating injuries.</p>
+        </div>
+    </div>
+
+    <div class="links">
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+    </div>
+
+    <div class="contact">
+        <h2>Contact Us</h2>
+        <p>Email: <a href="mailto:iocompile67692@gmail.com">iocompile67692@gmail.com</a></p>
     </div>
 </body>
 </html>

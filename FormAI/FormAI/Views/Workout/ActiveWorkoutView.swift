@@ -9,10 +9,14 @@ struct ActiveWorkoutView: View {
     @State private var selectedEffort: EffortLevel = .moderate
 
     let dayType: DayType
+    let adjustment: ReadinessEngine.TrainingAdjustment
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                if adjustment != .maintain {
+                    adjustmentBanner
+                }
                 timerBar
                 if viewModel.isWorkoutActive {
                     workoutContent
@@ -47,7 +51,7 @@ struct ActiveWorkoutView: View {
             }
             .onAppear {
                 if !viewModel.isWorkoutActive {
-                    viewModel.startWorkout(dayType: dayType, modelContext: modelContext)
+                    viewModel.startWorkout(dayType: dayType, adjustment: adjustment, modelContext: modelContext)
                 }
             }
         }
@@ -68,6 +72,45 @@ struct ActiveWorkoutView: View {
         }
         .padding()
         .background(Color(.systemGray6))
+    }
+
+    private var adjustmentBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: adjustmentIcon)
+                .foregroundStyle(adjustmentColor)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(adjustment.shortLabel)
+                    .font(.caption.bold())
+                Text(adjustment.description)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+            Spacer()
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(adjustmentColor.opacity(0.1))
+    }
+
+    private var adjustmentIcon: String {
+        switch adjustment {
+        case .scaleUp: return "arrow.up.circle.fill"
+        case .maintain: return "checkmark.circle.fill"
+        case .scaleDown: return "arrow.down.circle.fill"
+        case .deload: return "arrow.counterclockwise.circle.fill"
+        case .rest: return "bed.double.fill"
+        }
+    }
+
+    private var adjustmentColor: Color {
+        switch adjustment {
+        case .scaleUp: return .blue
+        case .maintain: return .green
+        case .scaleDown: return .orange
+        case .deload: return .purple
+        case .rest: return .red
+        }
     }
 
     private var workoutContent: some View {

@@ -5,19 +5,30 @@ import Charts
 struct ProgressDashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var progressVM = ProgressViewModel()
+    @State private var purchaseManager = PurchaseManager()
+    @State private var showingPaywall = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     statsCards
-                    volumeChart
-                    readinessChart
+                    if purchaseManager.isPro {
+                        volumeChart
+                        readinessChart
+                    } else {
+                        proLockedSection
+                    }
                 }
                 .padding()
+                .frame(maxWidth: 720)
+                .frame(maxWidth: .infinity)
             }
             .navigationTitle("Progress")
             .onAppear { progressVM.loadData(modelContext: modelContext) }
+            .fullScreenCover(isPresented: $showingPaywall) {
+                PaywallView(purchaseManager: purchaseManager)
+            }
         }
     }
 
@@ -111,6 +122,26 @@ struct ProgressDashboardView: View {
             }
         }
         .padding()
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private var proLockedSection: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "lock.fill")
+                .font(.system(size: 36))
+                .foregroundStyle(.secondary)
+            Text("Progress Charts & Analysis")
+                .font(.headline)
+            Text("Upgrade to Pro to unlock volume trends, readiness history, and PR tracking.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Button("Upgrade to Pro") { showingPaywall = true }
+                .buttonStyle(.borderedProminent)
+        }
+        .padding(32)
+        .frame(maxWidth: .infinity)
         .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }

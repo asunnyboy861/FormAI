@@ -11,9 +11,19 @@ final class WorkoutViewModel {
 
     private var timer: Timer?
 
-    func startWorkout(dayType: DayType, modelContext: ModelContext) {
+    func startWorkout(dayType: DayType, adjustment: ReadinessEngine.TrainingAdjustment = .maintain, modelContext: ModelContext) {
         let session = WorkoutSession(dayType: dayType)
-        let exercises = PlanGenerator.exercisesForDayType(dayType)
+        var exercises = PlanGenerator.exercisesForDayType(dayType)
+
+        if adjustment == .deload || adjustment == .rest {
+            exercises = PlanGenerator.exercisesForDayType(dayType).map { exercise in
+                (exercise.0, exercise.1, exercise.2)
+            }
+        }
+
+        let volumeMultiplier = adjustment.volumeMultiplier
+        let rpeAdjustment = adjustment.rpeAdjustment
+
         for (index, exercise) in exercises.enumerated() {
             let record = ExerciseRecord(
                 exerciseName: exercise.0,
@@ -21,8 +31,12 @@ final class WorkoutViewModel {
                 equipment: exercise.2,
                 order: index
             )
-            for _ in 1...3 {
-                let setRecord = SetRecord(weight: 0, targetReps: 8, targetRPE: 7)
+            let baseSetCount = 3
+            let adjustedSetCount = max(Int(Double(baseSetCount) * volumeMultiplier), 1)
+            let targetRPE = min(max(7 + rpeAdjustment, 1), 10)
+
+            for _ in 0..<adjustedSetCount {
+                let setRecord = SetRecord(weight: 0, targetReps: 8, targetRPE: targetRPE)
                 record.sets.append(setRecord)
             }
             session.exercises.append(record)

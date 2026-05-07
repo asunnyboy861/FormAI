@@ -133,7 +133,7 @@ struct ReadinessCheckView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .onChange(of: value.wrappedValue) { viewModel.calculateScore() }
+            .onChange(of: value.wrappedValue) { _, _ in viewModel.calculateScore() }
         }
     }
 }

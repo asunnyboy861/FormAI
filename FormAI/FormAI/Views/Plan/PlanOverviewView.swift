@@ -19,6 +19,8 @@ struct PlanOverviewView: View {
                     }
                 }
                 .padding()
+                .frame(maxWidth: 720)
+                .frame(maxWidth: .infinity)
             }
             .navigationTitle("Plan")
             .onAppear { planVM.loadActivePlan(modelContext: modelContext) }

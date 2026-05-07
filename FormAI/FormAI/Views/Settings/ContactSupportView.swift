@@ -121,7 +121,7 @@ struct ContactSupportView: View {
                    (200...299).contains(httpResponse.statusCode) {
                     showSuccess = true
                 } else {
-                    errorMessage = "Server error. Please try again or email us at support@zzoutuo.com"
+                    errorMessage = "Server error. Please try again or email us at iocompile67692@gmail.com"
                     showError = true
                 }
             }

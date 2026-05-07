@@ -7,6 +7,11 @@ struct SettingsView: View {
     @AppStorage("healthKitEnabled") private var healthKitEnabled = false
     @State private var purchaseManager = PurchaseManager()
     @State private var showingPaywall = false
+    @State private var healthKitService = HealthKitService()
+    @State private var showHealthKitAlert = false
+    @State private var showExportSheet = false
+    @State private var exportFileURL: URL?
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         NavigationStack {
@@ -51,6 +56,17 @@ struct SettingsView: View {
     private var healthKitSection: some View {
         Section {
             Toggle("HealthKit Integration", isOn: $healthKitEnabled)
+                .onChange(of: healthKitEnabled) { _, newValue in
+                    if newValue {
+                        Task {
+                            let authorized = await healthKitService.requestAuthorization()
+                            if !authorized {
+                                healthKitEnabled = false
+                                showHealthKitAlert = true
+                            }
+                        }
+                    }
+                }
             if healthKitEnabled {
                 Text("FormAI can read sleep, HRV, and resting heart rate from Apple Health to enhance your readiness score.")
                     .font(.caption)
@@ -58,6 +74,11 @@ struct SettingsView: View {
             }
         } header: {
             Text("Health")
+        }
+        .alert("HealthKit Access", isPresented: $showHealthKitAlert) {
+            Button("OK") {}
+        } message: {
+            Text("FormAI needs permission to read health data. Please enable it in Settings > Health > Data Access & Devices.")
         }
     }
 
@@ -67,6 +88,18 @@ struct SettingsView: View {
                 ContactSupportView()
             } label: {
                 Label("Contact Support", systemImage: "envelope")
+            }
+            if purchaseManager.isPro {
+                Button {
+                    exportData(format: "csv")
+                } label: {
+                    Label("Export Data (CSV)", systemImage: "square.and.arrow.up")
+                }
+                Button {
+                    exportData(format: "json")
+                } label: {
+                    Label("Export Data (JSON)", systemImage: "square.and.arrow.up")
+                }
             }
             Link(destination: URL(string: "https://asunnyboy861.github.io/FormAI/support.html")!) {
                 Label("Support", systemImage: "questionmark.circle")
@@ -80,6 +113,29 @@ struct SettingsView: View {
         } header: {
             Text("Legal & Support")
         }
+        .sheet(isPresented: $showExportSheet) {
+            if let url = exportFileURL {
+                ShareSheet(items: [url])
+            }
+        }
+    }
+
+    private func exportData(format: String) {
+        let descriptor = FetchDescriptor<WorkoutSession>(sortBy: [SortDescriptor(\.date, order: .reverse)])
+        let sessions = (try? modelContext.fetch(descriptor)) ?? []
+
+        let content: String
+        let filename: String
+        if format == "json" {
+            content = DataExportService.exportSessionsAsJSON(sessions: sessions)
+            filename = "FormAI_export_\(DateFormatter.shortDate.string(from: Date())).json"
+        } else {
+            content = DataExportService.exportSessionsAsCSV(sessions: sessions)
+            filename = "FormAI_export_\(DateFormatter.shortDate.string(from: Date())).csv"
+        }
+
+        exportFileURL = DataExportService.saveToFile(content: content, filename: filename)
+        showExportSheet = true
     }
 
     private var aboutSection: some View {
@@ -196,4 +252,14 @@ struct PaywallView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
+}
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

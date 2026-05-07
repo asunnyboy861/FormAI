@@ -5,8 +5,10 @@ struct TodayView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var readinessVM = ReadinessViewModel()
     @State private var planVM = PlanViewModel()
+    @State private var purchaseManager = PurchaseManager()
     @State private var showingReadinessCheck = false
     @State private var showingWorkout = false
+    @State private var showingPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -17,6 +19,8 @@ struct TodayView: View {
                     quickStartSection
                 }
                 .padding()
+                .frame(maxWidth: 720)
+                .frame(maxWidth: .infinity)
             }
             .navigationTitle("Today")
             .onAppear {
@@ -29,7 +33,13 @@ struct TodayView: View {
                 }
             }
             .fullScreenCover(isPresented: $showingWorkout) {
-                ActiveWorkoutView(dayType: planVM.todayDayType())
+                ActiveWorkoutView(
+                    dayType: planVM.todayDayType(),
+                    adjustment: readinessVM.hasCheckedToday ? readinessVM.adjustment : .maintain
+                )
+            }
+            .fullScreenCover(isPresented: $showingPaywall) {
+                PaywallView(purchaseManager: purchaseManager)
             }
         }
     }
@@ -44,6 +54,14 @@ struct TodayView: View {
                     Text("Checked ✓")
                         .font(.caption)
                         .foregroundStyle(.green)
+                } else if !purchaseManager.isPro {
+                    Text("PRO")
+                        .font(.caption2.bold())
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.blue)
+                        .foregroundStyle(.white)
+                        .clipShape(Capsule())
                 }
             }
 
@@ -60,7 +78,11 @@ struct TodayView: View {
                 }
             } else {
                 Button {
-                    showingReadinessCheck = true
+                    if purchaseManager.isPro {
+                        showingReadinessCheck = true
+                    } else {
+                        showingPaywall = true
+                    }
                 } label: {
                     Label("Check Readiness", systemImage: "heart.circle")
                         .frame(maxWidth: .infinity)
